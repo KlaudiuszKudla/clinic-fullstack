@@ -1,0 +1,6 @@
+[submodule "clinic-fe"]
+	path = clinic-fe
+	url = https://github.com/KlaudiuszKudla/clinic-fe.git
+[submodule "clinic-be"]
+	path = clinic-be
+	url = https://github.com/KlaudiuszKudla/clinic.git
