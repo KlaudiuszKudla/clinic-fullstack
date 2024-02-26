@@ -1,0 +1,53 @@
+version: '3'
+#Define services
+services:
+  #PosrgreSQL 
+  postgres:
+    image: "postgres:16.2-alpine"
+    container_name: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=clinic
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=clinic
+    ports:
+      - '5432:5432'
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+  api:
+    container_name: api-java
+    build: 
+      dockerfile: Dockerfile.dev
+      context: ./clinic-be
+    environment:
+      - DB_SERVER=postgres
+      - POSTGRES_DB=clinic
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=clinic
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+  client:
+    environment:
+      - WDS_SOCKET_PORT=0
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./clinic-fe
+    ports:
+      - 4200:4200
+    links:
+      - api
+
+#Volumes for DB data
+volumes:
+  postgres:
